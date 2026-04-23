@@ -1,4 +1,4 @@
-==========================================================
+
 # STRUKTUR PENYUSUNAN
 mahasiswa-absensi/
 │
@@ -64,7 +64,6 @@ mahasiswa-absensi/
 ├── package.json
 ├── .env
 └── artisan
-==============================================================
 
 >>STEP BY STEP<<
  STEP 1 — Buat Project & Install Dependencies
@@ -93,7 +92,7 @@ mahasiswa-absensi/
 
  >>STEP 2 KONFGURASI .ENV&DATABASE
 1. Konfigurasi .env
-================================================================
+
 APP_NAME="Mahasiswa Absensi"
 APP_ENV=local
 APP_KEY=base64:3O4REoZxD93wfiP/ECrootXS/FMUOjbRgjyiL8NKm78=
@@ -130,7 +129,7 @@ FILESYSTEM_DISK=local
 MAIL_MAILER=log
 
 VITE_APP_NAME="${APP_NAME}"
-==============================================================
+
 
 2. Buat Database di Laragon
     # CREATE DATABASE mahasiswa_absensi;
