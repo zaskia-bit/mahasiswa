@@ -1,59 +1,352 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+==========================================================
+# STRUKTUR PENYUSUNAN
+mahasiswa-absensi/
+│
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── AuthController.php
+│   │   │   ├── DashboardController.php
+│   │   │   ├── MahasiswaController.php
+│   │   │   ├── AbsensiController.php
+│   │   │   └── LaporanController.php
+│   │   │
+│   │   ├── Middleware/
+│   │   │   └── RoleMiddleware.php
+│   │
+│   ├── Models/
+│   │   ├── User.php
+│   │   ├── Mahasiswa.php
+│   │   └── Absensi.php
+│
+├── database/
+│   ├── migrations/
+│   │   ├── create_users_table.php
+│   │   ├── create_mahasiswa_table.php
+│   │   └── create_absensi_table.php
+│   │
+│   ├── seeders/
+│   │   ├── DatabaseSeeder.php
+│   │   ├── UserSeeder.php
+│   │   └── MahasiswaSeeder.php
+│
+├── resources/
+│   ├── views/
+│   │   ├── layout.blade.php
+│   │   ├── login.blade.php
+│   │   ├── home.blade.php
+│   │   │
+│   │   ├── admin/
+│   │   │   ├── dashboard.blade.php
+│   │   │   ├── mahasiswa.blade.php
+│   │   │   └── laporan.blade.php
+│   │   │
+│   │   ├── mahasiswa/
+│   │   │   ├── dashboard.blade.php
+│   │   │   └── absensi.blade.php
+│   │
+│   ├── js/
+│   │   ├── app.jsx
+│   │   └── components/
+│   │       ├── DashboardAdmin.jsx
+│   │       ├── DashboardMahasiswa.jsx
+│   │       ├── Mahasiswa.jsx
+│   │       ├── Absensi.jsx
+│   │       ├── Laporan.jsx
+│   │       └── Login.jsx
+│
+├── routes/
+│   └── web.php
+│
+├── public/
+│
+├── vite.config.js
+├── package.json
+├── .env
+└── artisan
+==============================================================
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+>>STEP BY STEP<<
+ STEP 1 — Buat Project & Install Dependencies
+ STEP 2 — Konfigurasi .env & Database
+ STEP 3 — Migration (users, mahasiswas, absensis)
+ STEP 4 — Model (User, Mahasiswa, Absensi) + Relasi
+ STEP 5 — Seeder (Admin + Mahasiswa default)
+ STEP 6 — Middleware RoleMiddleware
+ STEP 7 — Routes (web.php)
+ STEP 8 — Controllers (Auth, Dashboard, Mahasiswa, Absensi, Laporan)
+ STEP 9 — Blade Layout (layout.blade.php, login.blade.php, dll)
+ STEP 10 — React Components (semua .jsx)
+ STEP 11 — Vite Config & app.jsx
+ STEP 12 — Final Testing & Jalankan
 
-## About Laravel
+ >>STEP 1 — Membuat Project Laravel di Laragon
+1. Buka Terminal Laragon
+    # cd C:/laragon/www
+2. Buat Project Laravel 
+    # composer create-project laravel/laravel attendance-system
+3. Install React + Vite (Laravel Breeze dengan React)
+    # composer require laravel/breeze --dev
+    >> KEMUDIAN JALANKAN: php artisan breeze:install react
+4. Install Node Dependencies
+    # npm install
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+ >>STEP 2 KONFGURASI .ENV&DATABASE
+1. Konfigurasi .env
+================================================================
+APP_NAME="Mahasiswa Absensi"
+APP_ENV=local
+APP_KEY=base64:3O4REoZxD93wfiP/ECrootXS/FMUOjbRgjyiL8NKm78=
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:8000
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+APP_MAINTENANCE_DRIVER=file
 
-## Learning Laravel
+BCRYPT_ROUNDS=12
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+LOG_CHANNEL=stack
+LOG_LEVEL=debug
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=mahasiswa_absensi
+DB_USERNAME=root
+DB_PASSWORD=
 
-## Laravel Sponsors
+SESSION_DRIVER=file
+CACHE_STORE=file
+QUEUE_CONNECTION=sync
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+SESSION_LIFETIME=120
 
-### Premium Partners
+BROADCAST_CONNECTION=log
+FILESYSTEM_DISK=local
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+MAIL_MAILER=log
 
-## Contributing
+VITE_APP_NAME="${APP_NAME}"
+==============================================================
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. Buat Database di Laragon
+    # CREATE DATABASE mahasiswa_absensi;
+3. Tes Koneksi
+    # php artisan migrate:status
+4. Clear Config Cache
+    # php artisan config:clear
+    # php artisan cache:clear
 
-## Code of Conduct
+5. Generate App Key
+    # php artisan key:generate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+ >> STEP 3 — Migration (users, mahasiswas, absensis) 
+ >> STEP 4 — Model (User, Mahasiswa, Absensi) + Relasi
+1. buat file di terminal
+    # php artisan make:model create_user --migration
+    # php artisan make:model create_mahasiswas_table --migration
+    # php artisan make:mode create_absensis_table --migration
+2. Jalankan Migration
+    # php artisan migrate
 
-## Security Vulnerabilities
+ >> STEP 5 — Seeder (Admin + Mahasiswa Default)
+1. Buka file dan edit
+   # database/seeders/DatabaseSeeder.php
+2. Buat file UserSedeer
+   # php artisan make:seeder UserSeeder
+3. Buat file MahasiswaSeeder
+   # php artisan make:seeder MahasiswaSeeder
+    >>JALANKAN SEEDER<<
+      # php artisan db:seed
+4. Tambah Kolom Role ke Tabel Users
+   # php artisan migrate:rollback
+5. Jalankan Migrate ulang
+   # php artisan migrate
+6. Jalankan Seeder lagi
+   # php artisan db:seed
+7. Freesh Migration
+   # php artisan migrate:fresh
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+>>  STEP 6 — Middleware RoleMiddleware
+1. Buat File RoleMiddleware
+   # php artisan make:middleware RoleMiddleware
 
-## License
+>> STEP 7 — Routes (web.php)
+        >> EDIT Routes (web.php) <<
+>> Verifikasi Routes
+   # php artisan route:list
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+>> STEP 8 — Controllers
+1. Buat AuthController
+   # php artisan make:controller AuthController
+2. Buat DashboardController
+   # php artisan make:controller DashboardController
+3. Buat MahasiswaController
+   # php artisan make:controller MahasiswaController
+4. Buat AbsensiController
+   # php artisan make:controller AbsensiController
+5. Buat LaporanController
+   # php artisan make:controlle
+   
+>> STEP 9 - Blade Layout
+1. Buat File app.blade.php
+2. Buat File laporan-print.blade.php
+
+>> STEP 10 — React Components
+1. Buat Struktur Folder
+=============================
+resources/js/
+├── app.jsx
+├── Components/
+│   └── Sidebar.jsx
+└── Pages/
+    ├── Login.jsx
+    ├── Admin/
+    │   ├── Dashboard.jsx
+    │   ├── Mahasiswa.jsx
+    │   ├── Absensi.jsx
+    │   └── Laporan.jsx
+    └── Mahasiswa/
+        └── Dashboard.jsx
+=============================
+
+>> STEP 11 — Vite Config & app.jsx
+1. Edit vite.config.js
+   >>GANTI SEMUA FILE NYA<<
+================================================================================
+   import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/css/app.css', 'resources/js/app.jsx'],
+            refresh: true,
+        }),
+        react(),
+    ],
+    resolve: {
+        alias: {
+            '@': '/resources/js',
+        },
+    },
+});
+==================================================================================
+
+2. Edit app.jsx
+   >> GANTI SEMUA FILE NYA<<
+================================================================================
+import './bootstrap';
+import '../css/app.css';
+
+import { createRoot } from 'react-dom/client';
+import { createInertiaApp } from '@inertiajs/react';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+
+createInertiaApp({
+    title: (title) => `${title} — Mahasiswa Absensi`,
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.jsx`,
+            import.meta.glob('./Pages/**/*.jsx')
+        ),
+    setup({ el, App, props }) {
+        const root = createRoot(el);
+        root.render(<App {...props} />);
+    },
+    progress: {
+        color: '#4f46e5',
+    },
+});
+===============================================================================
+>> STEP 12 — Final Testing & Jalankan
+1. JALANKAN DI TERMINAL (1)
+   # php artisan serve
+2. JALANKAN DI TERMINAL (2)
+   # npm run dev
+    >> KEMUDIAN TES LOGIN <<
+
+>> JANGAN LUPA HAPUS FILE INI<<
+   buka resources/js/Components
+   >> HAPUS BAGIAN IN <<
+   ❌ Components/ApplicationLogo.jsx
+   ❌ Components/Checkbox.jsx
+   ❌ Components/Dropdown.jsx
+   ❌ Components/InputError.jsx 
+   ❌ Components/InputLabel.jsx
+   ❌ Components/Modal.jsx
+   ❌ Components/NavLink.jsx
+   ❌ Components/PrimaryButton.jsx
+   ❌ Components/ResponsiveNavLink.jsx
+   ❌ Components/TextInput.jsx
+   ❌ Layouts/ (seluruh folder)
+   ❌ Pages/Auth/ (seluruh folder)
+   ❌ Pages/Dashboard.jsx (bawaan breeze)
+   ❌ Pages/Profile/ (seluruh folder)
+   ❌ Pages/Welcome.jsx
+
+>> Edit juga untuk LaporanController.php ganti isinya <<
+=======================================================================================
+    <?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Absensi;
+use App\Models\Mahasiswa;
+use Illuminate\Http\Request;
+
+class LaporanController extends Controller
+{
+    public function index(Request $request)
+    {
+        $bulan = (int) ($request->bulan ?? now()->month);
+        $tahun = (int) ($request->tahun ?? now()->year);
+
+        $absensis = Absensi::with('mahasiswa')
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->latest()
+            ->get();
+
+        $mahasiswas = Mahasiswa::all();
+
+        return inertia('Admin/Laporan', [
+            'absensis'   => $absensis,
+            'mahasiswas' => $mahasiswas,
+            'bulan'      => $bulan,
+            'tahun'      => $tahun,
+        ]);
+    }
+
+    public function print(Request $request)
+    {
+        $bulan = (int) ($request->bulan ?? now()->month);
+        $tahun = (int) ($request->tahun ?? now()->year);
+
+        $absensis = Absensi::with('mahasiswa')
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->latest()
+            ->get();
+
+        return view('admin.laporan-print', [
+            'absensis' => $absensis,
+            'bulan'    => $bulan,
+            'tahun'    => $tahun,
+        ]);
+    }
+}
+======================================================================================================
+
+>> Jalankan ini
+   # php artisan migrate:fresh --seed
+   # php artisan storage:link
+   # php artisan route:list | findstr login
+
+>> JALANKAN SERVERNYA KE 2 TERMINAL <<
+   # php artisan serve
+   # npm run dev
