@@ -1,25 +1,33 @@
 import { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import Sidebar from '@/Components/Sidebar';
 
 export default function Mahasiswa({ mahasiswas }) {
     const [showModal, setShowModal] = useState(false);
     const [editData, setEditData] = useState(null);
-
-    const { data, setData, post, put, delete: destroy, processing, errors, reset } = useForm({
+    const [showPassword, setShowPassword] = useState(false);
+    const [processing, setProcessing] = useState(false);
+    const [form, setForm] = useState({
         name: '', email: '', password: '',
         nim: '', jurusan: '', semester: '', no_hp: '',
     });
+    const [errors, setErrors] = useState({});
+
+    const handleChange = (key, value) => {
+        setForm(prev => ({ ...prev, [key]: value }));
+    };
 
     const openAdd = () => {
-        reset();
+        setForm({ name: '', email: '', password: '', nim: '', jurusan: '', semester: '', no_hp: '' });
+        setErrors({});
         setEditData(null);
+        setShowPassword(false);
         setShowModal(true);
     };
 
     const openEdit = (mahasiswa) => {
         setEditData(mahasiswa);
-        setData({
+        setForm({
             name: mahasiswa.nama,
             email: mahasiswa.user.email,
             password: '',
@@ -28,27 +36,49 @@ export default function Mahasiswa({ mahasiswas }) {
             semester: mahasiswa.semester,
             no_hp: mahasiswa.no_hp ?? '',
         });
+        setErrors({});
+        setShowPassword(false);
         setShowModal(true);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (editData) {
-            put(`/admin/mahasiswa/${editData.id}`, {
-                onSuccess: () => { reset(); setShowModal(false); },
-            });
-        } else {
-            post('/admin/mahasiswa', {
-                onSuccess: () => { reset(); setShowModal(false); },
-            });
-        }
+        setProcessing(true);
+
+        const url = editData
+            ? `/admin/mahasiswa/${editData.id}/update`
+            : '/admin/mahasiswa';
+
+        router.post(url, form, {
+            onSuccess: () => {
+                setForm({ name: '', email: '', password: '', nim: '', jurusan: '', semester: '', no_hp: '' });
+                setErrors({});
+                setShowModal(false);
+                setProcessing(false);
+            },
+            onError: (errs) => {
+                setErrors(errs);
+                setProcessing(false);
+            },
+        });
     };
 
     const handleDelete = (id) => {
         if (confirm('Yakin ingin menghapus mahasiswa ini?')) {
-            destroy(`/admin/mahasiswa/${id}`);
+            router.post(`/admin/mahasiswa/${id}/delete`, {}, {
+                onSuccess: () => {},
+            });
         }
     };
+
+    const fields = [
+        { label: 'Nama Lengkap', key: 'name', type: 'text' },
+        { label: 'Email', key: 'email', type: 'email' },
+        { label: 'NIM', key: 'nim', type: 'text' },
+        { label: 'Jurusan', key: 'jurusan', type: 'text' },
+        { label: 'Semester', key: 'semester', type: 'text' },
+        { label: 'No HP', key: 'no_hp', type: 'text' },
+    ];
 
     return (
         <>
@@ -57,7 +87,6 @@ export default function Mahasiswa({ mahasiswas }) {
                 <Sidebar role="admin" />
 
                 <main className="flex-1 p-8">
-                    {/* Header */}
                     <div className="flex justify-between items-center mb-6">
                         <div>
                             <h2 className="text-2xl font-bold text-gray-800">Data Mahasiswa</h2>
@@ -71,18 +100,13 @@ export default function Mahasiswa({ mahasiswas }) {
                         </button>
                     </div>
 
-                    {/* Table */}
                     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                         <table className="w-full text-sm">
                             <thead className="bg-gray-50 border-b">
                                 <tr>
-                                    <th className="text-left px-6 py-4 font-medium text-gray-600">No</th>
-                                    <th className="text-left px-6 py-4 font-medium text-gray-600">NIM</th>
-                                    <th className="text-left px-6 py-4 font-medium text-gray-600">Nama</th>
-                                    <th className="text-left px-6 py-4 font-medium text-gray-600">Jurusan</th>
-                                    <th className="text-left px-6 py-4 font-medium text-gray-600">Semester</th>
-                                    <th className="text-left px-6 py-4 font-medium text-gray-600">No HP</th>
-                                    <th className="text-left px-6 py-4 font-medium text-gray-600">Aksi</th>
+                                    {['No', 'NIM', 'Nama', 'Jurusan', 'Semester', 'No HP', 'Aksi'].map(h => (
+                                        <th key={h} className="text-left px-6 py-4 font-medium text-gray-600">{h}</th>
+                                    ))}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -129,32 +153,49 @@ export default function Mahasiswa({ mahasiswas }) {
             {/* Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 max-h-screen overflow-y-auto">
                         <h3 className="text-lg font-bold text-gray-800 mb-4">
                             {editData ? 'Edit Mahasiswa' : 'Tambah Mahasiswa'}
                         </h3>
                         <form onSubmit={handleSubmit} className="space-y-3">
-                            {[
-                                { label: 'Nama Lengkap', key: 'name', type: 'text' },
-                                { label: 'Email', key: 'email', type: 'email' },
-                                { label: 'Password', key: 'password', type: 'password' },
-                                { label: 'NIM', key: 'nim', type: 'text' },
-                                { label: 'Jurusan', key: 'jurusan', type: 'text' },
-                                { label: 'Semester', key: 'semester', type: 'text' },
-                                { label: 'No HP', key: 'no_hp', type: 'text' },
-                            ].map(({ label, key, type }) => (
+
+                            {/* Field biasa */}
+                            {fields.map(({ label, key, type }) => (
                                 <div key={key}>
                                     <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
                                     <input
                                         type={type}
-                                        value={data[key]}
-                                        onChange={(e) => setData(key, e.target.value)}
+                                        value={form[key]}
+                                        onChange={(e) => handleChange(key, e.target.value)}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                        placeholder={editData && key === 'password' ? 'Kosongkan jika tidak diubah' : ''}
                                     />
                                     {errors[key] && <p className="text-red-500 text-xs mt-1">{errors[key]}</p>}
                                 </div>
                             ))}
+
+                            {/* Password dengan show/hide */}
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">
+                                    Password {editData && <span className="text-gray-400">(kosongkan jika tidak diubah)</span>}
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={form.password}
+                                        onChange={(e) => handleChange('password', e.target.value)}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-28"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-2 top-1.5 text-xs text-indigo-600 hover:text-indigo-800 px-2 py-1"
+                                    >
+                                        {showPassword ? '🙈 Sembunyikan' : '👁️ Tampilkan'}
+                                    </button>
+                                </div>
+                                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                            </div>
+
                             <div className="flex gap-3 pt-2">
                                 <button
                                     type="button"
