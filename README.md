@@ -83,7 +83,7 @@ mahasiswa-absensi/
 1. Buka Terminal Laragon
     # cd C:/laragon/www
 2. Buat Project Laravel 
-    # composer create-project laravel/laravel attendance-system
+    # composer create-project laravel/laravel Mahasiswa-Absensi
 3. Install React + Vite (Laravel Breeze dengan React)
     # composer require laravel/breeze --dev
     >> KEMUDIAN JALANKAN: php artisan breeze:install react
